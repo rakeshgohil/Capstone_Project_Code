@@ -1,6 +1,18 @@
 CREATE DATABASE SecureStorageDB;
 GO
 
+CREATE DATABASE SecureStorageDB2;
+GO
+
+CREATE DATABASE SecureStorageDB3;
+GO
+
+CREATE DATABASE SecureStorageDB4;
+GO
+
+CREATE DATABASE SecureStorageDB5;
+GO
+
 USE SecureStorageDB;
 GO
 
@@ -11,4 +23,13 @@ CREATE TABLE Users (
     Email NVARCHAR(255) NOT NULL UNIQUE,
     CreatedAt DATETIME DEFAULT GETDATE()
 )
+GO
+
+
+USE SecureStorageDB;
+GO
+
+ALTER TABLE Users
+ADD FirstName NVARCHAR(100),
+    LastName NVARCHAR(100);
 GO

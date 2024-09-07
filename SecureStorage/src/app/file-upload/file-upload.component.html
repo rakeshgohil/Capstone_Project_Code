@@ -1,0 +1,38 @@
+<div class="container mt-5">
+    <h2>Upload File</h2>
+    <form (ngSubmit)="uploadFile()" #fileForm="ngForm" enctype="multipart/form-data">
+      
+      <!-- File Upload Field -->
+      <div class="form-group">
+        <label for="file">Select File:</label>
+        <input type="file" class="form-control" id="file" (change)="onFileSelected($event)" required />
+      </div>
+  
+      <!-- User Selection for File Sharing -->
+      <div class="form-group">
+        <label>Select exactly 4 users to share the file with:</label>
+        <div *ngFor="let user of users">
+          <!-- Check if user.name is not equal to the username in localStorage -->
+          <div *ngIf="user.name !== username">
+            <input 
+              type="checkbox" 
+              [value]="user.firstname + ' ' + user.lastname" 
+              (change)="onUserSelect(user.id, $event)" 
+              [disabled]="selectedUserIds.length >= 4 && !selectedUserIds.includes(user.id)" 
+            />
+            {{ user.name }} <!-- Display user name -->
+          </div>
+        </div>
+        <small class="text-muted">You can select up to 4 users.</small>
+      </div>
+      
+  
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Upload and Share</button>
+  
+    </form>
+  
+    <!-- Display Upload Message -->
+    <div *ngIf="uploadMessage" class="alert alert-info mt-3">{{ uploadMessage }}</div>
+  </div>
+  

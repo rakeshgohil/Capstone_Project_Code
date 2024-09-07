@@ -34,10 +34,13 @@ export class UserLoginComponent {
             return throwError(() => new Error(this.errorMessage));
           })
         )
-        .subscribe(response => {
+        .subscribe((response: any) => {
           console.log('Login successful:', response);
+          console.log(response.userid);
+          localStorage.setItem('username', this.user.username);
+          localStorage.setItem('userid', response.userid);
           this.errorMessage = '';
-          this.router.navigate(['/home']);
+          this.router.navigate(['/file-upload']);
         });
     }
   }

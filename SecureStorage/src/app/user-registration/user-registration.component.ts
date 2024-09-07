@@ -11,6 +11,8 @@ import { environment } from '../../environments/environment';
 })
 export class UserRegistrationComponent {
   user = {
+    firstname: '',
+    lastname: '',
     username: '',
     password: '',
     email: ''
@@ -29,7 +31,7 @@ export class UserRegistrationComponent {
     // Perform password validation
     if (this.isPasswordValid(this.user.password)) {      
       this.errorMessage = '';
-      if (this.user.username && this.user.password && this.user.email) {
+      if (this.user.firstname && this.user.lastname && this.user.username && this.user.password && this.user.email) {
         this.http.post(`${this.apiUrl}/register`, this.user)
           .pipe(
             catchError(error => {
@@ -43,7 +45,7 @@ export class UserRegistrationComponent {
             this.userRegistered = true;
             console.log('User registered successfully:', response);
             this.errorMessage = 'User registered successfully.';
-            this.user = { username: '', password: '', email: '' };
+            this.user = { firstname: '', lastname: '', username: '', password: '', email: '' };
           });
       }
     }

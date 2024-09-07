@@ -9,14 +9,14 @@ class User:
         self.conn = pyodbc.connect(connection_string)
         self.cursor = self.conn.cursor()
 
-    def create_user(self, username, password, email):
+    def create_user(self, firstname, lastname, username, password, email):
         # salt = os.urandom(16).hex()
         # password_hash = generate_password_hash(password)
         password_hash = hashlib.sha256(password.encode('utf-8')).digest()
         try:
             self.cursor.execute('''
-                EXEC sp_CreateUser @Username=?, @PasswordHash=?, @Email=?
-            ''', (username, password_hash, email))
+                EXEC sp_CreateUser @FirstName=?, @LastName=?, @Username=?, @PasswordHash=?, @Email=?
+            ''', (firstname, lastname, username, password_hash, email))
             
             self.conn.commit()            
             return {"message": "User registered successfully!"}, 201
@@ -30,19 +30,16 @@ class User:
     def login_user(self, username, password):
         try:
             self.cursor.execute('''
-                SELECT PasswordHash FROM Users WHERE Username=?
+                SELECT PasswordHash, UserId FROM Users WHERE Username=?
             ''', (username,))
             result = self.cursor.fetchone()
-            print(result)
             
             if result:
                 stored_password_hash = result[0]
                 provided_password_hash = hashlib.sha256(password.encode('utf-8')).digest()
                 
-                print(stored_password_hash)
-                print(generate_password_hash(password).encode('utf-8'))
                 if provided_password_hash == stored_password_hash:
-                    return {"message": "Login successful!"}, 200
+                    return {"message": "Login successful!", "userid": result[1]}, 200
                 else:
                     return {"error": "Invalid username or password."}, 401
             else:
@@ -50,6 +47,13 @@ class User:
 
         except pyodbc.Error as e:
             return {"error": str(e)}, 500
-        finally:
-            self.cursor.close()
-            self.conn.close()
+    
+    def get_all_users(self):
+        """Fetch all users from the database"""
+        try:
+            self.cursor.execute('SELECT UserID, FirstName, LastName, Username FROM Users')
+            users = self.cursor.fetchall()
+            return [{"id": user[0], "firstname": user[1], "lastname": user[2], "name": user[3]} for user in users]
+        
+        except pyodbc.Error as e:
+            raise Exception(f"Database error: {str(e)}")
