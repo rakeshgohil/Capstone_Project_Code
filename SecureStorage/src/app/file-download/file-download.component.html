@@ -1,0 +1,33 @@
+<div class="container mt-5">
+    <h2>Download File</h2>
+  
+    <!-- Display the list of files associated with the logged-in user -->
+    <div class="form-group">
+        <label for="file">Select a file to download:</label>
+        <select class="form-control" id="file" (change)="onFileSelect($event)">
+          <!-- Static first option -->
+          <option value="" disabled selected>Select a file to download</option>
+          
+          <!-- Dynamic options from the files array -->
+          <option *ngFor="let file of files" [value]="file.Fileid">{{ file.FileName }}</option>
+        </select>
+      </div>
+            
+  
+    <!-- Input fields for the 3 shares -->
+    <div class="form-group">
+      <label>Enter 3 shares to reconstruct the secret:</label>
+      <input type="text" class="form-control" [(ngModel)]="shares[0]" placeholder="Share 1" />
+      <input type="text" class="form-control" [(ngModel)]="shares[1]" placeholder="Share 2" />
+      <input type="text" class="form-control" [(ngModel)]="shares[2]" placeholder="Share 3" />
+    </div>
+  
+    <!-- Error Message -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+  
+    <!-- Button to submit shares and download file -->
+    <button class="btn btn-primary" (click)="submitShares()">Submit Shares and Download</button>
+  </div>
+  

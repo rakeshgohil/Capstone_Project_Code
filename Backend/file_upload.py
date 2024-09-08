@@ -70,8 +70,7 @@ class FileUpload:
             # Split the secret into 5 shares, requiring 3 parts to reconstruct
             shares = PlaintextToHexSecretSharer.split_secret(secret, threshold, total_shares)
 
-            print(shares)
-                # Store the secret parts in the FileSecrets table
+            # Store the secret parts in the FileSecrets table
             for i in range(5):
                 print(f'share {i}')
                 connection_string = f'DRIVER={{SQL Server}};SERVER={Config.SERVER};DATABASE={self.databases[i]};UID={Config.USERNAME};PWD={Config.PASSWORD}'

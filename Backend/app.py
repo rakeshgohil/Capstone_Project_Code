@@ -1,5 +1,6 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS  # Import CORS
+from file_download import FileDownload
 from user import User
 from file_upload import FileUpload
 
@@ -11,6 +12,7 @@ CORS(app)  # Enable CORS for all routes
 # Create an instance of the User class
 user_model = User()
 file_upload = FileUpload()
+file_download = FileDownload()
 
 @app.route('/register', methods=['POST'])
 def register_user():
@@ -63,6 +65,40 @@ def upload_file():
     response, status = file_upload.save_file_and_generate_secret(file, userids, userid)
     return jsonify(response), status
 
+# Route to fetch files associated with the logged-in user
+@app.route('/user-files/<int:user_id>', methods=['GET'])
+def get_user_files(user_id):
+    try:
+        print('file_download.get_user_files ', user_id)
+        files = file_download.get_user_files(user_id)
+        return jsonify(files), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
+# Route to validate shares before allowing the download
+@app.route('/validate-shares', methods=['POST'])
+def validate_shares():
+    data = request.json
+    file_id = data.get('fileId')
+    shares = data.get('shares')
+
+    try:
+        # Validate the shares and reconstruct the secret
+        if file_download.validate_shares(file_id, shares):
+            return jsonify({"valid": True}), 200
+        else:
+            return jsonify({"valid": False}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+# Route to download the file if shares are valid
+@app.route('/download/<int:file_id>', methods=['GET'])
+def download_file(file_id):
+    try:
+        file_path = file_download.get_file_path(file_id)
+        return send_file(file_path, as_attachment=True)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True)

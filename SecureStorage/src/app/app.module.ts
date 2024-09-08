@@ -8,7 +8,8 @@ import { UserRegistrationComponent } from './user-registration/user-registration
 import { HttpClientModule } from '@angular/common/http';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { HomeComponent } from './home/home.component';
-import { FileUploadComponent } from './file-upload/file-upload.component'; 
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { FileDownloadComponent } from './file-download/file-download.component'; 
 
 @NgModule({
   declarations: [
@@ -16,7 +17,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     UserRegistrationComponent,
     UserLoginComponent,
     HomeComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    FileDownloadComponent
   ],
   imports: [
     FormsModule,

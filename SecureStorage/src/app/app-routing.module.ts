@@ -4,13 +4,15 @@ import { UserRegistrationComponent } from './user-registration/user-registration
 import { UserLoginComponent } from './user-login/user-login.component';
 import { HomeComponent } from './home/home.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { FileDownloadComponent } from './file-download/file-download.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: '/login', pathMatch: 'full' },  // Default route redirects to login
-  { path: 'login', component: UserLoginComponent },        // Login route
-  { path: 'home', component: HomeComponent }, 
-  { path: 'register', component: UserRegistrationComponent }, // User Registration path
-  { path: 'file-upload', component: FileUploadComponent }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: UserLoginComponent },
+  { path: 'home', component: HomeComponent },
+  { path: 'register', component: UserRegistrationComponent },
+  { path: 'file-upload', component: FileUploadComponent },
+  { path: 'file-download', component: FileDownloadComponent }
 ];
 
 @NgModule({
