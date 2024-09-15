@@ -13,48 +13,59 @@ class FileDownload:
     # Fetch files associated with the given user_id
     def get_user_files(self, user_id):
         try:
-
-            fileIds =[]
-            files =[]
+            fileIds = []
+            files = []
             for i in range(5):
                 connection_string = f'DRIVER={{SQL Server}};SERVER={Config.SERVER};DATABASE={self.databases[i]};UID={Config.USERNAME};PWD={Config.PASSWORD}'
                 print(connection_string)
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
 
+                # Get the FileID and FileSecret for the given UserID from FileSecrets
                 query = '''
-                    SELECT FileID FROM FileSecrets WHERE UserID = ?
+                    SELECT FileID, SecretPart FROM FileSecrets WHERE UserID = ?
                 '''
                 self.cursor.execute(query, user_id)
                 result = self.cursor.fetchall()
                 print(result)
-                # Append the results to the files list
+
+                # Append the results to the fileIds list along with the secrets
                 for row in result:
-                    fileIds.append(row[0])
-                    
+                    fileIds.append((row[0], row[1]))  # Append (FileID, FileSecret)
+                        
             if fileIds:
-                placeholders = ','.join(['?'] * len(fileIds))
+                # Extract only the FileID for the SQL IN clause
+                file_id_list = [file[0] for file in fileIds]
+                placeholders = ','.join(['?'] * len(file_id_list))
                 connection_string = f'DRIVER={{SQL Server}};SERVER={Config.SERVER};DATABASE={Config.DATABASE};UID={Config.USERNAME};PWD={Config.PASSWORD}'
                 print(connection_string)
                 self.conn = pyodbc.connect(connection_string)
                 self.cursor = self.conn.cursor()
-                
+
+                # Fetch FileID and FileName from Files table based on the list of FileIDs
                 query = f'''
                     SELECT FileID, FileName FROM Files WHERE FileID IN ({placeholders})
                 '''
+                self.cursor.execute(query, file_id_list)
+                result = self.cursor.fetchall()
 
-                self.cursor.execute(query, fileIds)
-                result = self.cursor.fetchall()    
+                # Append the results to the files list with FileSecret included
                 for row in result:
-                    files.append({"Fileid": row[0], "FileName": row[1]})        
+                    # Find the corresponding FileSecret using the FileID
+                    file_secret = next(file[1] for file in fileIds if file[0] == row[0])
+                    files.append({
+                        "FileID": row[0],
+                        "FileName": row[1],
+                        "FileSecret": file_secret
+                    })
 
             print(files)
             return files        
-        			
+
         except pyodbc.Error as e:
             print(str(e))
             return {"error": str(e)}, 500
-        
+    
     # Validate the shares and reconstruct the secret
     def validate_shares(self, fileId, shares):
         # Fetch the file's original secret from the database

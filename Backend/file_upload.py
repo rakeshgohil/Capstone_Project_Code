@@ -24,7 +24,7 @@ class FileUpload:
         file.save(file_path)
         try:            
             characters = string.ascii_letters + string.digits + string.punctuation
-            secret = ''.join(secrets.choice(characters) for _ in range(64))
+            secret = ''.join(secrets.choice(characters) for _ in range(8))
             print(filename, file_path, userid, secret)
             # Insert file info into the Files table
 
