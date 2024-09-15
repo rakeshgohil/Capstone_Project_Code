@@ -62,7 +62,7 @@ onFileSelect(event: Event) {
     }
 
     const payload = {
-      fileId: this.selectedFile.Fileid,
+      fileId: this.selectedFile.FileID,
       shares: this.shares
     };
 
@@ -83,7 +83,7 @@ onFileSelect(event: Event) {
 
   // Download the file if shares are valid
   downloadFile(file: any) {
-    const downloadUrl = `${this.apiUrl}/download/${this.selectedFile.Fileid}`;
+    const downloadUrl = `${this.apiUrl}/download/${this.selectedFile.FileID}`;
     window.location.href = downloadUrl;
   }
 }

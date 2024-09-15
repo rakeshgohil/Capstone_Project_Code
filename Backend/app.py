@@ -83,6 +83,8 @@ def validate_shares():
     shares = data.get('shares')
 
     try:
+        print(file_id)
+        print(shares)
         # Validate the shares and reconstruct the secret
         if file_download.validate_shares(file_id, shares):
             return jsonify({"valid": True}), 200
